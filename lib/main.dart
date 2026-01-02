@@ -1,21 +1,16 @@
+import 'package:flashcard_app/ui/screens/welcome.dart';
 import 'package:flutter/material.dart';
-import 'ui/theme/app_theme.dart';
-import 'ui/screens/welcome.dart';
 
 void main() {
-  runApp(const FlashLearnApp());
+  runApp(MyApp());
 }
 
-class FlashLearnApp extends StatelessWidget {
-  const FlashLearnApp({super.key});
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'FlashLearn',
-      theme: AppTheme.lightTheme,
-      home:  Welcome(),
+      home: Scaffold(body: Welcome()),
     );
   }
 }
