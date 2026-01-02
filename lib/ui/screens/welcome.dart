@@ -104,5 +104,4 @@ class Welcome extends StatelessWidget {
         ),
       ),
     );
-  }
-}
+  }}
