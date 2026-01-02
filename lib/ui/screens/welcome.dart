@@ -1,5 +1,5 @@
-import 'package:flashcard_app/ui/screens/decks.dart';
-import 'package:flashcard_app/ui/theme/app_theme.dart';
+import 'package:flashcard_app/ui/screens/decks/decks.dart';
+import 'package:flashcard_app/ui/screens/decks/decks_tukmel.dart';
 import 'package:flutter/material.dart';
 
 class Welcome extends StatelessWidget {
