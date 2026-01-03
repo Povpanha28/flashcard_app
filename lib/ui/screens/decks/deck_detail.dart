@@ -1,4 +1,3 @@
-import 'package:flashcard_app/data/data_repostiy.dart';
 import 'package:flashcard_app/models/deck.dart';
 import 'package:flashcard_app/models/flashcard.dart';
 import 'package:flashcard_app/ui/screens/widgets/cardlist.dart';
@@ -16,7 +15,6 @@ class DeckDetail extends StatefulWidget {
 }
 
 class _DeckDetailState extends State<DeckDetail> {
-  final DataRepository _repository = DataRepository();
 
   Future<void> onCreate() async {
     final newCard = await showModalBottomSheet<Flashcard>(
@@ -29,7 +27,6 @@ class _DeckDetailState extends State<DeckDetail> {
       setState(() {
         widget.deck.addCard(newCard);
       });
-      await _repository.saveDecks();
     }
   }
 

@@ -1,4 +1,4 @@
-import 'package:flashcard_app/data/data_repostiy.dart';
+import 'package:flashcard_app/data/mock_data.dart';
 import 'package:flashcard_app/models/deck.dart';
 import 'package:flashcard_app/ui/screens/decks/deck_detail.dart';
 import 'package:flashcard_app/ui/screens/widgets/deck_form.dart';
@@ -14,10 +14,6 @@ class Decks extends StatefulWidget {
 }
 
 class _DecksState extends State<Decks> {
-  final DataRepository _repository = DataRepository();
-
-  List<Deck> get _decks => _repository.decks;
-
   Future<void> onCreate() async {
     final deck = await showModalBottomSheet<Deck>(
       isScrollControlled: true,
@@ -26,8 +22,9 @@ class _DecksState extends State<Decks> {
     );
 
     if (deck != null) {
-      await _repository.addDeck(deck);
-      setState(() {});
+      setState(() {
+        mockDecks.add(deck);
+      });
     }
   }
 
@@ -86,17 +83,17 @@ class _DecksState extends State<Decks> {
       ),
     );
 
-    if (_decks.isNotEmpty) {
+    if (mockDecks.isNotEmpty) {
       content = ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-        itemCount: _decks.length,
+        itemCount: mockDecks.length,
         itemBuilder: (context, index) => DeckCard(
-          deck: _decks[index],
+          deck: mockDecks[index],
           onTap: () async {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DeckDetail(deck: _decks[index]),
+                builder: (context) => DeckDetail(deck: mockDecks[index]),
               ),
             );
             setState(() {});
@@ -109,7 +106,7 @@ class _DecksState extends State<Decks> {
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: const CustomAppBar(),
       body: content,
-      floatingActionButton: _decks.isNotEmpty
+      floatingActionButton: mockDecks.isNotEmpty
           ? FloatingActionButton(
               onPressed: onCreate,
               backgroundColor: const Color(0xFF6366F1),
