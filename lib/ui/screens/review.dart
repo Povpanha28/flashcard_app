@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flashcard_app/model/flashcard.dart';
+import 'package:flashcard_app/models/deck.dart';
+import 'package:flashcard_app/models/flashcard.dart';
 import 'dart:math';
 
 class FlashcardReview extends StatefulWidget {
   final Deck deck;
+  final int initialIndex; // Add this
 
-  const FlashcardReview({Key? key, required this.deck}) : super(key: key);
+  const FlashcardReview({
+    Key? key,
+    required this.deck,
+    this.initialIndex = 0, // Default to 0
+  }) : super(key: key);
 
   @override
   State<FlashcardReview> createState() => _FlashcardReviewState();
@@ -19,7 +25,8 @@ class _FlashcardReviewState extends State<FlashcardReview> {
   @override
   void initState() {
     super.initState();
-    flashcards = List.from(widget.deck.flashcards);
+    flashcards = List.from(widget.deck.cards);
+    currentIndex = widget.initialIndex; // Set initial index
   }
 
   void flipCard() {
@@ -58,6 +65,7 @@ class _FlashcardReviewState extends State<FlashcardReview> {
   Widget build(BuildContext context) {
     if (flashcards.isEmpty) {
       return Scaffold(
+        backgroundColor: Color(0xFF6366F1),
         appBar: AppBar(
           title: Text('No Flashcards'),
         ),

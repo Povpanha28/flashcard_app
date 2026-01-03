@@ -1,4 +1,5 @@
 import 'package:flashcard_app/models/deck.dart';
+import 'package:flashcard_app/ui/screens/review.dart'; // Add this import
 import 'package:flutter/material.dart';
 
 class DeckDetail extends StatelessWidget {
@@ -48,6 +49,17 @@ class CardList extends StatelessWidget {
         return ListTile(
           title: Text(card.question),
           subtitle: Text(card.answer),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FlashcardReview(
+                  deck: deck,
+                  initialIndex: index, // Pass the tapped card's index
+                ),
+              ),
+            );
+          },
         );
       },
     );
