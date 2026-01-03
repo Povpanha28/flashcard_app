@@ -1,4 +1,4 @@
-import 'package:flashcard_app/ui/screens/decks.dart';
+import 'package:flashcard_app/ui/screens/decks/decks.dart';
 import 'package:flutter/material.dart';
 
 class Welcome extends StatelessWidget {
@@ -53,7 +53,7 @@ class Welcome extends StatelessWidget {
               'Learn smarter, not harder',
               style: TextStyle(
                 fontSize: 18,
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w300,
               ),
             ),
@@ -64,7 +64,7 @@ class Welcome extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 height: 1.5,
               ),
             ),
