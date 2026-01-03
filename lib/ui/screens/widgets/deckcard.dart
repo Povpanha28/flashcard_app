@@ -1,10 +1,10 @@
 import 'package:flashcard_app/models/deck.dart';
-import 'package:flashcard_app/ui/screens/decks/deck_detail.dart';
 import 'package:flutter/material.dart';
 
 class DeckCard extends StatelessWidget {
   final Deck deck;
-  const DeckCard({super.key, required this.deck});
+  final VoidCallback? onTap;
+  const DeckCard({super.key, required this.deck, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +13,7 @@ class DeckCard extends StatelessWidget {
       child: Material(
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => DeckDetail(deck: deck),
-              ),
-            );
-          },
+          onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -102,7 +95,9 @@ class DeckCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
-                    value: deck.progress?.mastery != null ? deck.progress!.mastery / 100 : 0,
+                    value: deck.progress?.mastery != null
+                        ? deck.progress!.mastery / 100
+                        : 0,
                     minHeight: 6,
                     backgroundColor: Color(0xFFE5E7EB),
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.green),

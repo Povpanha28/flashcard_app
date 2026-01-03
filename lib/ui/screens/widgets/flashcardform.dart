@@ -2,7 +2,10 @@ import 'package:flashcard_app/models/flashcard.dart';
 import 'package:flutter/material.dart';
 
 class FlashcardForm extends StatefulWidget {
-  const FlashcardForm({super.key});
+  const FlashcardForm({super.key, this.flashcard});
+
+  /// If provided, the form will be in edit mode
+  final Flashcard? flashcard;
 
   @override
   State<FlashcardForm> createState() => _FlashcardFormState();
@@ -12,9 +15,15 @@ class _FlashcardFormState extends State<FlashcardForm> {
   final TextEditingController questionCtrl = TextEditingController();
   final TextEditingController answerCtrl = TextEditingController();
 
+  bool get isEditMode => widget.flashcard != null;
+
   @override
   void initState() {
     super.initState();
+    if (widget.flashcard != null) {
+      questionCtrl.text = widget.flashcard!.question;
+      answerCtrl.text = widget.flashcard!.answer;
+    }
     questionCtrl.addListener(() => setState(() {}));
     answerCtrl.addListener(() => setState(() {}));
   }
@@ -26,13 +35,21 @@ class _FlashcardFormState extends State<FlashcardForm> {
     super.dispose();
   }
 
-  void onCreate() {
+  void onSave() {
     if (_formKey.currentState!.validate()) {
-      Flashcard newFlashcard = Flashcard(
-        question: questionCtrl.text,
-        answer: answerCtrl.text,
-      );
-      Navigator.pop(context, newFlashcard);
+      Flashcard result;
+      if (isEditMode) {
+        result = widget.flashcard!.copyWith(
+          question: questionCtrl.text,
+          answer: answerCtrl.text,
+        );
+      } else {
+        result = Flashcard(
+          question: questionCtrl.text,
+          answer: answerCtrl.text,
+        );
+      }
+      Navigator.pop(context, result);
     }
   }
 
@@ -58,7 +75,7 @@ class _FlashcardFormState extends State<FlashcardForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _header("Create New Flashcard"),
+            _header(isEditMode ? "Edit Flashcard" : "Create New Flashcard"),
             const SizedBox(height: 24),
             _label("Question"),
             const SizedBox(height: 8),
@@ -94,7 +111,12 @@ class _FlashcardFormState extends State<FlashcardForm> {
         _button("Cancel", onCancel, Colors.grey.shade200, Colors.black),
 
         const SizedBox(width: 16),
-        _button("Create Deck", onCreate, Color(0xFF6366F1), Colors.white),
+        _button(
+          isEditMode ? "Save" : "Create",
+          onSave,
+          Color(0xFF6366F1),
+          Colors.white,
+        ),
       ],
     );
   }
