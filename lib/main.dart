@@ -1,3 +1,4 @@
+import 'package:flashcard_app/ui/screens/decks/decks.dart';
 import 'package:flashcard_app/ui/screens/welcome.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: Welcome()), // Use mock data
+      home: Scaffold(body: Decks()),
     );
   }
 }

@@ -28,4 +28,35 @@ final List<Deck> mockDecks = [
       ),
     ],
   ),
+  Deck(
+    title: 'World Capitals',
+    description: 'Capitals of countries around the world.',
+    icon: Icons.public,
+    color: const Color(0xFF1A535C),
+    cards: [
+      Flashcard(question: 'France', answer: 'Paris'),
+      Flashcard(question: 'Japan', answer: 'Tokyo'),
+      Flashcard(question: 'Canada', answer: 'Ottawa'),
+    ],
+  ),
+  Deck(
+    title: 'Science Facts',
+    description: 'Interesting facts from various fields of science.',
+    icon: Icons.science,
+    color: const Color(0xFFFFC300),
+    cards: [
+      Flashcard(
+        question: 'What is the chemical symbol for water?',
+        answer: 'H₂O',
+      ),
+      Flashcard(
+        question: 'What planet is known as the Red Planet?',
+        answer: 'Mars',
+      ),
+      Flashcard(
+        question: 'What force keeps us on the ground?',
+        answer: 'Gravity',
+      ),
+    ],
+  ),
 ];
