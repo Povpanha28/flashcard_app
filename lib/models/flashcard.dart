@@ -7,8 +7,8 @@ class Flashcard {
   final String id;
   final String question;
   final String answer;
-  final Progress? progress;
+  
 
-  Flashcard({required this.question, required this.answer, this.progress})
+  Flashcard({required this.question, required this.answer})
     : id = const Uuid().v4();
 }
