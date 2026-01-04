@@ -1,10 +1,19 @@
 import 'package:flashcard_app/models/deck.dart';
-import 'package:flashcard_app/ui/screens/decks/deck_detail.dart';
 import 'package:flutter/material.dart';
 
 class DeckCard extends StatelessWidget {
   final Deck deck;
-  const DeckCard({super.key, required this.deck});
+  final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  const DeckCard({
+    super.key,
+    required this.deck,
+    this.onTap,
+    this.onEdit,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +22,7 @@ class DeckCard extends StatelessWidget {
       child: Material(
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => DeckDetail(deck: deck),
-              ),
-            );
-          },
+          onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -60,25 +62,37 @@ class DeckCard extends StatelessWidget {
 
                     SizedBox(width: 12),
                     // Deck name
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          deck.title,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            deck.title,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 4),
+                          const SizedBox(height: 4),
 
-                        // Description
-                        Text(
-                          deck.description,
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
+                          // Description
+                          Text(
+                            deck.description,
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: onEdit,
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                    ),
+                    IconButton(
+                      onPressed: onDelete,
+                      icon: Icon(Icons.delete, color: Colors.red),
                     ),
                   ],
                 ),
@@ -102,7 +116,9 @@ class DeckCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
-                    value: deck.progress?.mastery != null ? deck.progress!.mastery / 100 : 0,
+                    value: deck.progress?.mastery != null
+                        ? deck.progress!.mastery / 100
+                        : 0,
                     minHeight: 6,
                     backgroundColor: Color(0xFFE5E7EB),
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
