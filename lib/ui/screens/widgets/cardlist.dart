@@ -1,4 +1,3 @@
-import 'package:flashcard_app/data/data_repostiy.dart';
 import 'package:flashcard_app/models/flashcard.dart';
 import 'package:flashcard_app/ui/screens/widgets/flashcardform.dart';
 import 'package:flashcard_app/ui/screens/widgets/flashcartile.dart';
@@ -6,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flashcard_app/models/deck.dart';
 
 class CardList extends StatefulWidget {
-  const CardList({super.key, required this.deck});
+  const CardList({super.key, required this.deck, this.onCardChanged});
 
   final Deck deck;
+  final Future<void> Function()? onCardChanged;
 
   @override
   State<CardList> createState() => _CardListState();
 }
 
 class _CardListState extends State<CardList> {
-  final DataRepository _repository = DataRepository();
-
   Future<void> onEdit(Flashcard card) async {
     final updatedCard = await showModalBottomSheet<Flashcard>(
       isScrollControlled: true,
@@ -28,17 +26,20 @@ class _CardListState extends State<CardList> {
       setState(() {
         widget.deck.updateFlashcard(card.id, updatedCard);
       });
-      await _repository.saveDecks();
+      // Save changes when a card is edited
+      await widget.onCardChanged?.call();
     }
   }
 
-  void onDelete(Flashcard card) {
+  Future<void> onDelete(Flashcard card) async {
     final index = widget.deck.cards.indexWhere((c) => c.id == card.id);
 
     setState(() {
       widget.deck.removeCard(card.id);
     });
-    _repository.saveDecks();
+
+    // Save changes when a card is deleted
+    await widget.onCardChanged?.call();
 
     // Show snackbar with undo option
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -48,11 +49,12 @@ class _CardListState extends State<CardList> {
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           label: 'Undo',
-          onPressed: () {
+          onPressed: () async {
             setState(() {
               widget.deck.insertCard(index, card);
             });
-            _repository.saveDecks();
+            // Save changes after undo
+            await widget.onCardChanged?.call();
           },
         ),
         duration: const Duration(seconds: 4),

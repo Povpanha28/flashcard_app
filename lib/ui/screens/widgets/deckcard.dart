@@ -4,7 +4,16 @@ import 'package:flutter/material.dart';
 class DeckCard extends StatelessWidget {
   final Deck deck;
   final VoidCallback? onTap;
-  const DeckCard({super.key, required this.deck, this.onTap});
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  const DeckCard({
+    super.key,
+    required this.deck,
+    this.onTap,
+    this.onEdit,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,25 +62,37 @@ class DeckCard extends StatelessWidget {
 
                     SizedBox(width: 12),
                     // Deck name
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          deck.title,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            deck.title,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 4),
+                          const SizedBox(height: 4),
 
-                        // Description
-                        Text(
-                          deck.description,
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
+                          // Description
+                          Text(
+                            deck.description,
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: onEdit,
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                    ),
+                    IconButton(
+                      onPressed: onDelete,
+                      icon: Icon(Icons.delete, color: Colors.red),
                     ),
                   ],
                 ),

@@ -6,16 +6,16 @@ import 'package:flashcard_app/ui/screens/widgets/flashcardform.dart';
 import 'package:flutter/material.dart';
 
 class DeckDetail extends StatefulWidget {
-  const DeckDetail({super.key, required this.deck});
+  const DeckDetail({super.key, required this.deck, this.onDeckUpdated});
 
   final Deck deck;
+  final Future<void> Function()? onDeckUpdated;
 
   @override
   State<DeckDetail> createState() => _DeckDetailState();
 }
 
 class _DeckDetailState extends State<DeckDetail> {
-
   Future<void> onCreate() async {
     final newCard = await showModalBottomSheet<Flashcard>(
       isScrollControlled: true,
@@ -27,6 +27,8 @@ class _DeckDetailState extends State<DeckDetail> {
       setState(() {
         widget.deck.addCard(newCard);
       });
+      // Save changes when a new card is added
+      await widget.onDeckUpdated?.call();
     }
   }
 
@@ -60,7 +62,12 @@ class _DeckDetailState extends State<DeckDetail> {
               ],
             ),
             const SizedBox(height: 8),
-            Expanded(child: CardList(deck: widget.deck)),
+            Expanded(
+              child: CardList(
+                deck: widget.deck,
+                onCardChanged: widget.onDeckUpdated,
+              ),
+            ),
           ],
         ),
       ),
