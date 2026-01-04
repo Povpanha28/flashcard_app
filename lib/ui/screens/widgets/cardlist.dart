@@ -78,7 +78,13 @@ class _CardListState extends State<CardList> {
       itemCount: widget.deck.cards.length,
       itemBuilder: (context, index) {
         final card = widget.deck.cards[index];
-        return FlashcardTile(deck: widget.deck, card: card, onEdit: onEdit, onDelete: onDelete);
+        return FlashcardTile(
+          deck: widget.deck,
+          card: card,
+          onEdit: onEdit,
+          onDelete: onDelete,
+          initialIndex: index, // Pass the index
+        );
       },
     );
 

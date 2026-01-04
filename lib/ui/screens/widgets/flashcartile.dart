@@ -7,15 +7,17 @@ class FlashcardTile extends StatefulWidget {
   const FlashcardTile({
     super.key,
     required this.card,
-    required this.deck, // Add this line
+    required this.deck,
     this.onEdit,
     this.onDelete,
+    this.initialIndex = 0, // Add this line
   });
 
   final Flashcard card;
-  final Deck deck; // Add this line
+  final Deck deck;
   final void Function(Flashcard)? onEdit;
   final void Function(Flashcard)? onDelete;
+  final int initialIndex; // Add this line
 
   @override
   State<FlashcardTile> createState() => _FlashcardTileState();
@@ -101,7 +103,10 @@ class _FlashcardTileState extends State<FlashcardTile> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FlashcardReview(deck: widget.deck), // Use widget.deck
+                              builder: (context) => FlashcardReview(
+                                deck: widget.deck,
+                                initialIndex: widget.initialIndex, // Pass the index
+                              ),
                             ),
                           );
                         },
