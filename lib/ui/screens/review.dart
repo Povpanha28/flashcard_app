@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flashcard_app/models/deck.dart';
 import 'package:flashcard_app/models/flashcard.dart';
+import 'package:flip_card/flip_card.dart';
+import 'package:flashcard_app/ui/screens/widgets/Card.dart';
 import 'dart:math';
 
 class FlashcardReview extends StatefulWidget {
@@ -94,70 +96,16 @@ class _FlashcardReviewState extends State<FlashcardReview> {
             Expanded(
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 20),
-                child: Stack(
-                  children: [
-                    // Card Container
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                showFront ? 'Front' : 'Back',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              Text(
-                                showFront ? currentCard.question : currentCard.answer,
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Flip Button
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: ElevatedButton(
-                        onPressed: flipCard,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          elevation: 2,
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(color: Colors.grey[300]!),
-                          ),
-                        ),
-                        child: Text('Flip'),
-                      ),
-                    ),
-                  ],
+                child: FlipCard(
+                  flipOnTouch: true,
+                  front: buildCardSide(
+                    label: 'Front',
+                    content: currentCard.question,
+                  ),
+                  back: buildCardSide(
+                    label: 'Back',
+                    content: currentCard.answer,
+                  ),
                 ),
               ),
             ),
@@ -240,3 +188,5 @@ class _FlashcardReviewState extends State<FlashcardReview> {
     );
   }
 }
+
+
