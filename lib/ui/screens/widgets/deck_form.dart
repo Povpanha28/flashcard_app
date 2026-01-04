@@ -2,7 +2,10 @@ import 'package:flashcard_app/models/deck.dart';
 import 'package:flutter/material.dart';
 
 class DeckForm extends StatefulWidget {
-  const DeckForm({super.key});
+  const DeckForm({super.key, this.deck});
+
+  /// If provided, the form will be in edit mode
+  final Deck? deck;
 
   @override
   State<DeckForm> createState() => _DeckFormState();
@@ -14,6 +17,19 @@ class _DeckFormState extends State<DeckForm> {
 
   IconData selectedIcon = Icons.public;
   Color selectedColor = Colors.purple;
+
+  bool get isEditing => widget.deck != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.deck != null) {
+      nameCtrl.text = widget.deck!.title;
+      descCtrl.text = widget.deck!.description;
+      selectedIcon = widget.deck!.icon ?? Icons.public;
+      selectedColor = widget.deck!.color ?? Colors.purple;
+    }
+  }
 
   final List<IconData> icons = [
     Icons.menu_book,
@@ -41,15 +57,18 @@ class _DeckFormState extends State<DeckForm> {
     Colors.deepOrange,
   ];
 
-  void onCreate() {
+  void onSave() {
     if (_formKey.currentState!.validate()) {
-      Deck newDeck = Deck(
+      Deck deck = Deck(
+        id: widget.deck?.id, // Keep the same ID when editing
         title: nameCtrl.text,
         description: descCtrl.text,
         icon: selectedIcon,
         color: selectedColor,
+        cards: widget.deck?.cards ?? [], // Preserve cards when editing
+        progress: widget.deck?.progress, // Preserve progress when editing
       );
-      Navigator.pop(context, newDeck);
+      Navigator.pop(context, deck);
     }
   }
 
@@ -75,7 +94,7 @@ class _DeckFormState extends State<DeckForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _header("Create New Deck"),
+            _header(isEditing ? "Edit Deck" : "Create New Deck"),
             const SizedBox(height: 24),
             _label("Deck Name"),
             const SizedBox(height: 8),
@@ -123,8 +142,8 @@ class _DeckFormState extends State<DeckForm> {
 
                 const SizedBox(width: 16),
                 _button(
-                  "Create Deck",
-                  onCreate,
+                  isEditing ? "Save Changes" : "Create Deck",
+                  onSave,
                   Color(0xFF6366F1),
                   Colors.white,
                 ),
@@ -146,10 +165,7 @@ class _DeckFormState extends State<DeckForm> {
           text,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        IconButton(
-          onPressed: onCancel,
-          icon: Icon(Icons.close),
-        ),
+        IconButton(onPressed: onCancel, icon: Icon(Icons.close)),
       ],
     );
   }
