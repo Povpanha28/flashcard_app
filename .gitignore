@@ -43,3 +43,28 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# VS Code settings
+.vscode/
+
+# Flutter/Dart build outputs
+build/
+android/build/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/engine/
+ios/Flutter/*.app
+ios/Flutter/*.dSYM
+ios/Flutter/*.ipa
+
+# Generated plugin registrant files
+**/generated_plugin_registrant.*
+**/generated_plugins.cmake
+**/GeneratedPluginRegistrant.swift
+
+# Problem reports
+problems-report.html

@@ -1,17 +1,22 @@
 import 'package:flashcard_app/models/flashcard.dart';
+import 'package:flashcard_app/models/deck.dart';
 import 'package:flutter/material.dart';
 
 class FlashcardTile extends StatefulWidget {
   const FlashcardTile({
     super.key,
     required this.card,
+    required this.deck,
     this.onEdit,
     this.onDelete,
+    this.initialIndex = 0, // Add this line
   });
 
   final Flashcard card;
+  final Deck deck;
   final void Function(Flashcard)? onEdit;
   final void Function(Flashcard)? onDelete;
+  final int initialIndex; // Add this line
 
   @override
   State<FlashcardTile> createState() => _FlashcardTileState();
