@@ -176,6 +176,36 @@ class _DeckDetailState extends State<DeckDetail> {
               ),
             ],
           ),
+
+          const SizedBox(height: 16),
+
+          // Review Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: Icon(Icons.play_arrow_rounded),
+              label: Text('Review'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              onPressed: widget.deck.cards.isEmpty
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FlashcardReview(deck: widget.deck),
+                        ),
+                      );
+                    },
+            ),
+          ),
         ],
       ),
     );

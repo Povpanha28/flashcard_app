@@ -1,6 +1,5 @@
 import 'package:flashcard_app/models/flashcard.dart';
 import 'package:flashcard_app/models/deck.dart';
-import 'package:flashcard_app/ui/screens/review.dart';
 import 'package:flutter/material.dart';
 
 class FlashcardTile extends StatefulWidget {
@@ -89,26 +88,6 @@ class _FlashcardTileState extends State<FlashcardTile> {
                           setState(() {
                             _isExpanded = !_isExpanded;
                           });
-                        },
-                        constraints: const BoxConstraints(
-                          minWidth: 32,
-                          minHeight: 32,
-                        ),
-                        padding: EdgeInsets.zero,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.rate_review, size: 18),
-                        color: Colors.deepPurple,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FlashcardReview(
-                                deck: widget.deck,
-                                initialIndex: widget.initialIndex, // Pass the index
-                              ),
-                            ),
-                          );
                         },
                         constraints: const BoxConstraints(
                           minWidth: 32,

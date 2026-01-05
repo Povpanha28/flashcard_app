@@ -83,7 +83,6 @@ class _CardListState extends State<CardList> {
           card: card,
           onEdit: onEdit,
           onDelete: onDelete,
-          initialIndex: index, // Pass the index
         );
       },
     );
