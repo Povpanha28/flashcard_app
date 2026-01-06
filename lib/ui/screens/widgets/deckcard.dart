@@ -116,8 +116,24 @@ class DeckCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
-                    value: deck.progress?.mastery != null
-                        ? deck.progress!.mastery / 100
+                    value:
+                        deck.progress?.getMastery(
+                              deck.progress!.getKnownCount(
+                                deck.cards,
+                              ),
+                              deck.progress!.getTotalCount(
+                                deck.cards,
+                              ),
+                            ) !=
+                            null
+                        ? deck.progress!.getMastery(
+                            deck.progress!.getKnownCount(
+                              deck.cards,
+                            ),
+                            deck.progress!.getTotalCount(
+                              deck.cards,
+                            ),
+                          )
                         : 0,
                     minHeight: 6,
                     backgroundColor: Color(0xFFE5E7EB),

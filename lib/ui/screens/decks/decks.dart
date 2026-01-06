@@ -91,25 +91,37 @@ class _DecksState extends State<Decks> {
       });
       await _repository.saveDecks(_decks);
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Deck "${deletedDeck.title}" deleted'),
-            behavior: SnackBarBehavior.floating,
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () async {
-                setState(() {
-                  _decks.insert(index, deletedDeck);
-                });
-                await _repository.saveDecks(_decks);
-              },
-            ),
-            duration: const Duration(seconds: 4),
+      if (!mounted) return;
+
+      final messenger = ScaffoldMessenger.of(context);
+
+      messenger.removeCurrentSnackBar();
+
+      ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? controller;
+
+      controller = messenger.showSnackBar(
+        SnackBar(
+          content: Text('Deck "${deletedDeck.title}" deleted'),
+          behavior: SnackBarBehavior.fixed,
+          duration: const Duration(days: 1), // disable auto
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () async {
+              setState(() {
+                _decks.insert(index, deletedDeck);
+              });
+              await _repository.saveDecks(_decks);
+
+              controller?.close(); // ✅ now safe
+            },
           ),
-        );
-      }
+        ),
+      );
+
+      // Force dismiss after 3 seconds (Windows fix)
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) controller?.close();
+      });
     }
   }
 

@@ -33,33 +33,43 @@ class _CardListState extends State<CardList> {
 
   Future<void> onDelete(Flashcard card) async {
     final index = widget.deck.cards.indexWhere((c) => c.id == card.id);
+    if (index == -1) return;
 
     setState(() {
       widget.deck.removeCard(card.id);
     });
 
-    // Save changes when a card is deleted
     await widget.onCardChanged?.call();
+    
+    if (!mounted) return;
 
-    // Show snackbar with undo option
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.removeCurrentSnackBar();
+
+    ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? controller;
+
+    controller = messenger.showSnackBar(
       SnackBar(
-        content: Text('Flashcard deleted'),
-        behavior: SnackBarBehavior.floating,
+        content: const Text('Flashcard deleted'),
+        behavior: SnackBarBehavior.fixed, // ✅ REQUIRED on Windows
+        duration: const Duration(days: 1), // disable auto
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () async {
             setState(() {
               widget.deck.insertCard(index, card);
             });
-            // Save changes after undo
             await widget.onCardChanged?.call();
+            controller?.close(); // close immediately
           },
         ),
-        duration: const Duration(seconds: 4),
       ),
     );
+
+    // ✅ Force auto-dismiss after 4 seconds
+    Future.delayed(const Duration(seconds: 4), () {
+      if (mounted) controller?.close();
+    });
   }
 
   @override
