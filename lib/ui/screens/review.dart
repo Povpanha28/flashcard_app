@@ -1,9 +1,11 @@
 import 'package:flashcard_app/ui/screens/widgets/custombar.dart';
+import 'package:flashcard_app/ui/screens/widgets/showCompleteDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flashcard_app/models/deck.dart';
 import 'package:flashcard_app/models/flashcard.dart';
 import 'package:flip_card/flip_card.dart';
-import 'package:flashcard_app/ui/screens/widgets/Card.dart';
+import 'widgets/back_NextWidget.dart';
+import 'widgets/reviewCard.dart';
 import 'dart:math';
 
 class FlashcardReview extends StatefulWidget {
@@ -26,20 +28,34 @@ class _FlashcardReviewState extends State<FlashcardReview> {
   int currentIndex = 0;
   bool showFront = true;
   List<Flashcard> flashcards = [];
+  final TextEditingController _noteCtrl = TextEditingController();
+  final Map<Flashcard, String> _notes = {}; // one note per flashcard (attached to the object)
 
   @override
   void initState() {
     super.initState();
     flashcards = List.from(widget.deck.cards);
     currentIndex = widget.initialIndex; // Set initial index
+    // load note for initial card (if any)
+    _noteCtrl.text = _notes[flashcards[currentIndex]] ?? '';
+  }
+
+  @override
+  void dispose() {
+    _noteCtrl.dispose();
+    super.dispose();
   }
 
   void nextCard() {
+    // save current card note before moving
+    _notes[flashcards[currentIndex]] = _noteCtrl.text;
     if (currentIndex < flashcards.length - 1) {
       setState(() {
         currentIndex++;
         showFront = true;
       });
+      // load note for the new current card
+      _noteCtrl.text = _notes[flashcards[currentIndex]] ?? '';
     } else {
       // Show completion dialog when reaching the end
       showCompletionDialog();
@@ -47,19 +63,27 @@ class _FlashcardReviewState extends State<FlashcardReview> {
   }
 
   void previousCard() {
+    // save current card note before moving
+    _notes[flashcards[currentIndex]] = _noteCtrl.text;
     if (currentIndex > 0) {
       setState(() {
         currentIndex--;
         showFront = true;
       });
+      // load note for the new current card
+      _noteCtrl.text = _notes[flashcards[currentIndex]] ?? '';
     }
   }
 
   void shuffleCards() {
     setState(() {
+      // save current note
+      _notes[flashcards[currentIndex]] = _noteCtrl.text;
       flashcards.shuffle(Random());
       currentIndex = 0;
       showFront = true;
+      // load note for new current card after shuffle
+      _noteCtrl.text = _notes[flashcards[currentIndex]] ?? '';
     });
   }
 
@@ -71,137 +95,15 @@ class _FlashcardReviewState extends State<FlashcardReview> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Center(
-        child: Container(
-          width: 320,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 16,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.celebration, color: Colors.purple, size: 48),
-              const SizedBox(height: 16),
-              Text(
-                'Review Complete!',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                  color: Colors.green,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'You have reached the end of the deck.',
-                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        setState(() {
-                          currentIndex = 0;
-                          showFront = true;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: Text(
-                        'Try Again',
-                        style: TextStyle(decoration: TextDecoration.none),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).maybePop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[200],
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: Text(
-                        'Leave',
-                        style: TextStyle(decoration: TextDecoration.none),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildCardSide({required String label, required String content}) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Center(
-                child: Text(
-                  content,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
-        ),
+      builder: (context) => Showcompletedialog(
+        onTryAgain: () {
+          Navigator.of(context).pop(); // Close dialog
+          shuffleCards(); // Shuffle and restart
+        },
+        onLeave: () {
+          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context).pop(); // Exit review screen
+        },
       ),
     );
   }
@@ -225,6 +127,7 @@ class _FlashcardReviewState extends State<FlashcardReview> {
                 height: 500,
                 margin: EdgeInsets.symmetric(vertical: 20),
                 child: FlipCard(
+                  speed: 250,
                   flipOnTouch: true,
                   onFlipDone: (isFront) {
                     // Show dialog if last card and just flipped to back
@@ -246,7 +149,9 @@ class _FlashcardReviewState extends State<FlashcardReview> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextField(
-                  maxLines: 3,
+                  controller: _noteCtrl,
+                  onChanged: (v) => _notes[flashcards[currentIndex]] = v,
+                  maxLines: 2,
                   decoration: InputDecoration(
                     labelText: 'Note',
                     hintText: 'Enter your note here',
@@ -273,75 +178,66 @@ class _FlashcardReviewState extends State<FlashcardReview> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Previous Button
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: ElevatedButton(
-                          onPressed: currentIndex > 0 ? previousCard : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            disabledBackgroundColor: Colors.grey[300],
-                            disabledForegroundColor: Colors.grey,
-                            elevation: 2,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Colors.grey[300]!),
-                            ),
-                          ),
-                          child: Text('Previous'),
-                        ),
+                    // Pill back button (fixed width)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: buildBackPill(
+                        onPressed: previousCard,
+                        enabled: currentIndex > 0,
+                      ),
+                    ),
+                    // progress of cards
+                    Text(
+                      '${currentIndex + 1} / ${flashcards.length}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[700],
                       ),
                     ),
                     // Shuffle Button
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: ElevatedButton(
-                          onPressed: shuffleCards,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            elevation: 2,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Colors.grey[300]!),
-                            ),
-                          ),
-                          child: Text('Shuffle'),
-                        ),
-                      ),
-                    ),
-                    // Next Button
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: ElevatedButton(
-                          onPressed: currentIndex < flashcards.length - 1
-                              ? nextCard
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.black,
-                            disabledBackgroundColor: Colors.grey[300],
-                            disabledForegroundColor: Colors.grey,
-                            elevation: 2,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Colors.grey[300]!),
-                            ),
-                          ),
-                          child: Text('Next'),
-                        ),
+                    // Expanded(
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 8),
+                    //     child: ElevatedButton(
+                    //       onPressed: shuffleCards,
+                    //       style: ElevatedButton.styleFrom(
+                    //         backgroundColor: Colors.white,
+                    //         foregroundColor: Colors.black,
+                    //         elevation: 2,
+                    //         padding: EdgeInsets.symmetric(vertical: 16),
+                    //         shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(8),
+                    //           side: BorderSide(color: Colors.grey[300]!),
+                    //         ),
+                    //       ),
+                    //       child: Text('Shuffle'),
+                    //     ),
+                    //   ),
+                    // ),
+                    // Next pill (fixed width)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: buildNextPill(
+                        onPressed: currentIndex < flashcards.length - 1 ? nextCard : null,
+                        enabled: currentIndex < flashcards.length - 1,
                       ),
                     ),
                   ],
                 ),
               ),
+              // progress bar
+              SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: LinearProgressIndicator(
+                  value: (currentIndex + 1) / flashcards.length,
+                  minHeight: 8,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+                ),
+              ),
+              SizedBox(height: 16), // extra space at bottom
             ],
           ),
         ),
@@ -349,3 +245,7 @@ class _FlashcardReviewState extends State<FlashcardReview> {
     );
   }
 }
+
+
+
+
