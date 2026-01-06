@@ -9,14 +9,16 @@ class FlashcardTile extends StatefulWidget {
     required this.deck,
     this.onEdit,
     this.onDelete,
-    this.initialIndex = 0, // Add this line
+    this.onToggleKnown,
+    this.initialIndex = 0,
   });
 
   final Flashcard card;
   final Deck deck;
   final void Function(Flashcard)? onEdit;
   final void Function(Flashcard)? onDelete;
-  final int initialIndex; // Add this line
+  final void Function(Flashcard, bool)? onToggleKnown;
+  final int initialIndex;
 
   @override
   State<FlashcardTile> createState() => _FlashcardTileState();
@@ -47,30 +49,82 @@ class _FlashcardTileState extends State<FlashcardTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // isKnown status chip at top right
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Question',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.purple,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  // Compact pill-style toggle
+                  GestureDetector(
+                    onTap: () {
+                      widget.onToggleKnown?.call(
+                        widget.card,
+                        !widget.card.isKnown,
+                      );
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: widget.card.isKnown
+                            ? Colors.green.withOpacity(0.15)
+                            : Colors.orange.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: widget.card.isKnown
+                              ? Colors.green.withOpacity(0.5)
+                              : Colors.orange.withOpacity(0.5),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            widget.card.isKnown
+                                ? Icons.check_circle_rounded
+                                : Icons.hourglass_bottom_rounded,
+                            size: 14,
+                            color: widget.card.isKnown
+                                ? Colors.green
+                                : Colors.orange,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            widget.card.isKnown ? 'Mastered' : 'Learning',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: widget.card.isKnown
+                                  ? Colors.green
+                                  : Colors.orange,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Question text
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Question',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.purple,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          widget.card.question,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      widget.card.question,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[800]),
                     ),
                   ),
                   Row(

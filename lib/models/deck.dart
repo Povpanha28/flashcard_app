@@ -48,6 +48,26 @@ class Deck {
     }
   }
 
+  Deck copyWith({
+    String? id,
+    String? title,
+    String? description,
+    List<Flashcard>? cards,
+    IconData? icon,
+    Color? color,
+    Progress? progress,
+  }) {
+    return Deck(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      cards: cards ?? this.cards,
+      icon: icon ?? this.icon,
+      color: color ?? this.color,
+      progress: progress ?? this.progress,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -10,12 +10,14 @@ import 'dart:math';
 
 class FlashcardReview extends StatefulWidget {
   final Deck deck;
-  final int initialIndex; // Add this
+  final int initialIndex;
+  final Future<void> Function()? onReviewComplete;
 
   const FlashcardReview({
     Key? key,
     required this.deck,
-    this.initialIndex = 0, // Default to 0
+    this.initialIndex = 0,
+    this.onReviewComplete,
   }) : super(key: key);
 
   @override
@@ -86,7 +88,10 @@ class _FlashcardReviewState extends State<FlashcardReview> {
   }
 
   // pop up modal after flipping the last card
-  void showCompletionDialog() {
+  void showCompletionDialog() async {
+    // Update progress when review is complete
+    await widget.onReviewComplete?.call();
+
     showDialog(
       context: context,
       barrierDismissible: false,

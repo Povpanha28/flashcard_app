@@ -66,7 +66,6 @@ class _DeckFormState extends State<DeckForm> {
         icon: selectedIcon,
         color: selectedColor,
         cards: widget.deck?.cards ?? [], // Preserve cards when editing
-        progress: widget.deck?.progress, // Preserve progress when editing
       );
       Navigator.pop(context, deck);
     }

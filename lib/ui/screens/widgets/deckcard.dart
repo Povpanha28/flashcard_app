@@ -15,6 +15,36 @@ class DeckCard extends StatelessWidget {
     this.onDelete,
   });
 
+  String _formatLastReviewed(DateTime? lastReviewed) {
+    if (lastReviewed == null) return 'Never reviewed';
+
+    final now = DateTime.now();
+    final difference = now.difference(lastReviewed);
+
+    if (difference.inDays == 0) {
+      if (difference.inHours == 0) {
+        if (difference.inMinutes == 0) {
+          return 'Just now';
+        }
+        return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
+      }
+      return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+    } else if (difference.inDays == 1) {
+      return 'Yesterday';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+    } else if (difference.inDays < 365) {
+      final months = (difference.inDays / 30).floor();
+      return '$months ${months == 1 ? 'month' : 'months'} ago';
+    } else {
+      final years = (difference.inDays / 365).floor();
+      return '$years ${years == 1 ? 'year' : 'years'} ago';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -116,8 +146,16 @@ class DeckCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
-                    value: deck.progress?.mastery != null
-                        ? deck.progress!.mastery / 100
+                    value:
+                        deck.progress?.getMastery(
+                              deck.progress!.getKnownCount(deck.cards),
+                              deck.progress!.getTotalCount(deck.cards),
+                            ) !=
+                            null
+                        ? deck.progress!.getMastery(
+                            deck.progress!.getKnownCount(deck.cards),
+                            deck.progress!.getTotalCount(deck.cards),
+                          )
                         : 0,
                     minHeight: 6,
                     backgroundColor: Color(0xFFE5E7EB),
@@ -134,6 +172,13 @@ class DeckCard extends StatelessWidget {
                     SizedBox(width: 6),
                     Text(
                       '${deck.cards.length} cards',
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(Icons.access_time, size: 16, color: Colors.grey),
+                    SizedBox(width: 6),
+                    Text(
+                      _formatLastReviewed(deck.progress?.lastReviewed),
                       style: TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                   ],

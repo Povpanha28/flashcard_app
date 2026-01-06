@@ -1,23 +1,53 @@
+import 'package:flashcard_app/models/flashcard.dart';
+
 class Progress {
-  final int knownCard;
-  final int unknownCard;
+  final int reviewedCount;
+  final DateTime lastReviewed;
 
-  Progress({required this.knownCard, required this.unknownCard});
+  Progress({this.reviewedCount = 0, DateTime? lastReviewed})
+    : lastReviewed = lastReviewed ?? DateTime.now();
 
-  double get mastery {
-    final total = knownCard + unknownCard;
-    if (total == 0) return 0.0;
-    return (knownCard / total) * 100;
+  int getKnownCount(List<Flashcard> cards) {
+    return cards.where((card) => card.isKnown).length;
+  }
+
+  int getTotalCount(List<Flashcard> cards) {
+    return cards.length;
+  }
+
+  double getMastery(int knownCard, int totalCard) {
+    if (totalCard == 0) return 0.0;
+    return knownCard / totalCard;
+  }
+
+  Progress copyWith({int? reviewedCount, DateTime? lastReviewed}) {
+    return Progress(
+      reviewedCount: reviewedCount ?? this.reviewedCount,
+      lastReviewed: lastReviewed ?? this.lastReviewed,
+    );
+  }
+
+  /// Increment the review count and update last reviewed time
+  Progress incrementReview() {
+    return Progress(
+      reviewedCount: reviewedCount + 1,
+      lastReviewed: DateTime.now(),
+    );
   }
 
   Map<String, dynamic> toJson() {
-    return {'knownCard': knownCard, 'unknownCard': unknownCard};
+    return {
+      'reviewedCount': reviewedCount,
+      'lastReviewed': lastReviewed.toIso8601String(),
+    };
   }
 
   factory Progress.fromJson(Map<String, dynamic> json) {
     return Progress(
-      knownCard: json['knownCard'] as int? ?? 0,
-      unknownCard: json['unknownCard'] as int? ?? 0,
+      reviewedCount: json['reviewedCount'] as int? ?? 0,
+      lastReviewed: json['lastReviewed'] != null
+          ? DateTime.parse(json['lastReviewed'] as String)
+          : null,
     );
   }
 }
