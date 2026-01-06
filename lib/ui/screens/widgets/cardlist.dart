@@ -40,7 +40,7 @@ class _CardListState extends State<CardList> {
     });
 
     await widget.onCardChanged?.call();
-
+    
     if (!mounted) return;
 
     final messenger = ScaffoldMessenger.of(context);

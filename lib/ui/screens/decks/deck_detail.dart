@@ -153,8 +153,8 @@ class _DeckDetailState extends State<DeckDetail> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
-              value: widget.deck.progress?.mastery != null
-                  ? widget.deck.progress!.mastery / 100
+              value: widget.deck.progress?.getMastery(widget.deck.progress!.getKnownCount(widget.deck.cards), widget.deck.progress!.getTotalCount(widget.deck.cards)) != null
+                  ? widget.deck.progress!.getMastery(widget.deck.progress!.getKnownCount(widget.deck.cards), widget.deck.progress!.getTotalCount(widget.deck.cards))
                   : 0,
               minHeight: 6,
               backgroundColor: Color(0xFFE5E7EB),
