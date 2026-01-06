@@ -40,7 +40,7 @@ class _CardListState extends State<CardList> {
     });
 
     await widget.onCardChanged?.call();
-    
+
     if (!mounted) return;
 
     final messenger = ScaffoldMessenger.of(context);
@@ -72,6 +72,14 @@ class _CardListState extends State<CardList> {
     });
   }
 
+  Future<void> onToggleKnown(Flashcard card, bool isKnown) async {
+    final updatedCard = card.copyWith(isKnown: isKnown);
+    setState(() {
+      widget.deck.updateFlashcard(card.id, updatedCard);
+    });
+    await widget.onCardChanged?.call();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.deck.cards.isEmpty) {
@@ -93,6 +101,7 @@ class _CardListState extends State<CardList> {
           card: card,
           onEdit: onEdit,
           onDelete: onDelete,
+          onToggleKnown: onToggleKnown,
         );
       },
     );

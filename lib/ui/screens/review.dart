@@ -8,12 +8,14 @@ import 'dart:math';
 
 class FlashcardReview extends StatefulWidget {
   final Deck deck;
-  final int initialIndex; // Add this
+  final int initialIndex;
+  final Future<void> Function()? onReviewComplete;
 
   const FlashcardReview({
     Key? key,
     required this.deck,
-    this.initialIndex = 0, // Default to 0
+    this.initialIndex = 0,
+    this.onReviewComplete,
   }) : super(key: key);
 
   @override
@@ -62,7 +64,10 @@ class _FlashcardReviewState extends State<FlashcardReview> {
   }
 
   // pop up modal after flipping the last card
-  void showCompletionDialog() {
+  void showCompletionDialog() async {
+    // Update progress when review is complete
+    await widget.onReviewComplete?.call();
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -88,7 +93,11 @@ class _FlashcardReviewState extends State<FlashcardReview> {
               const SizedBox(height: 16),
               Text(
                 'Review Complete!',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.green),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  color: Colors.green,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -119,9 +128,7 @@ class _FlashcardReviewState extends State<FlashcardReview> {
                       ),
                       child: Text(
                         'Try Again',
-                        style: TextStyle(
-                          decoration: TextDecoration.none,
-                        ),
+                        style: TextStyle(decoration: TextDecoration.none),
                       ),
                     ),
                   ),
@@ -142,9 +149,7 @@ class _FlashcardReviewState extends State<FlashcardReview> {
                       ),
                       child: Text(
                         'Leave',
-                        style: TextStyle(
-                          decoration: TextDecoration.none,
-                        ),
+                        style: TextStyle(decoration: TextDecoration.none),
                       ),
                     ),
                   ),
@@ -165,11 +170,7 @@ class _FlashcardReviewState extends State<FlashcardReview> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
         ],
       ),
       child: Padding(
@@ -319,7 +320,9 @@ class _FlashcardReviewState extends State<FlashcardReview> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: ElevatedButton(
-                          onPressed: currentIndex < flashcards.length - 1 ? nextCard : null,
+                          onPressed: currentIndex < flashcards.length - 1
+                              ? nextCard
+                              : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black,
@@ -346,5 +349,3 @@ class _FlashcardReviewState extends State<FlashcardReview> {
     );
   }
 }
-
-

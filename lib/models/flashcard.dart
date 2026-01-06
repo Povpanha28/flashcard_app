@@ -24,8 +24,13 @@ class Flashcard {
     );
   }
 
-  Flashcard markAsKnown() {
-    return copyWith(isKnown: true);
+  Flashcard ToggleKnown() {
+    return Flashcard(
+      id: id,
+      question: question,
+      answer: answer,
+      isKnown: !isKnown,
+    );
   }
 
   Map<String, dynamic> toJson() {

@@ -205,6 +205,11 @@ class _DecksState extends State<Decks> {
                   onDeckUpdated: () async {
                     await _repository.saveDecks(_decks);
                   },
+                  onProgressUpdated: (newProgress) {
+                    _decks[index] = _decks[index].copyWith(
+                      progress: newProgress,
+                    );
+                  },
                 ),
               ),
             );

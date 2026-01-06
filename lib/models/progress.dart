@@ -20,6 +20,21 @@ class Progress {
     return knownCard / totalCard;
   }
 
+  Progress copyWith({int? reviewedCount, DateTime? lastReviewed}) {
+    return Progress(
+      reviewedCount: reviewedCount ?? this.reviewedCount,
+      lastReviewed: lastReviewed ?? this.lastReviewed,
+    );
+  }
+
+  /// Increment the review count and update last reviewed time
+  Progress incrementReview() {
+    return Progress(
+      reviewedCount: reviewedCount + 1,
+      lastReviewed: DateTime.now(),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'reviewedCount': reviewedCount,

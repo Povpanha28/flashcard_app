@@ -1,4 +1,5 @@
 import 'package:flashcard_app/models/deck.dart';
+import 'package:flashcard_app/models/progress.dart';
 import 'package:flashcard_app/ui/screens/review.dart'; // Add this import
 import 'package:flashcard_app/models/flashcard.dart';
 import 'package:flashcard_app/ui/screens/widgets/cardlist.dart';
@@ -7,10 +8,16 @@ import 'package:flashcard_app/ui/screens/widgets/flashcardform.dart';
 import 'package:flutter/material.dart';
 
 class DeckDetail extends StatefulWidget {
-  const DeckDetail({super.key, required this.deck, this.onDeckUpdated});
+  const DeckDetail({
+    super.key,
+    required this.deck,
+    this.onDeckUpdated,
+    this.onProgressUpdated,
+  });
 
   final Deck deck;
   final Future<void> Function()? onDeckUpdated;
+  final void Function(Progress)? onProgressUpdated;
 
   @override
   State<DeckDetail> createState() => _DeckDetailState();
@@ -154,8 +161,16 @@ class _DeckDetailState extends State<DeckDetail> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
-              value: widget.deck.progress?.getMastery(widget.deck.progress!.getKnownCount(widget.deck.cards), widget.deck.progress!.getTotalCount(widget.deck.cards)) != null
-                  ? widget.deck.progress!.getMastery(widget.deck.progress!.getKnownCount(widget.deck.cards), widget.deck.progress!.getTotalCount(widget.deck.cards))
+              value:
+                  widget.deck.progress?.getMastery(
+                        widget.deck.progress!.getKnownCount(widget.deck.cards),
+                        widget.deck.progress!.getTotalCount(widget.deck.cards),
+                      ) !=
+                      null
+                  ? widget.deck.progress!.getMastery(
+                      widget.deck.progress!.getKnownCount(widget.deck.cards),
+                      widget.deck.progress!.getTotalCount(widget.deck.cards),
+                    )
                   : 0,
               minHeight: 6,
               backgroundColor: Color(0xFFE5E7EB),
@@ -192,17 +207,33 @@ class _DeckDetailState extends State<DeckDetail> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               onPressed: widget.deck.cards.isEmpty
                   ? null
-                  : () {
-                      Navigator.push(
+                  : () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FlashcardReview(deck: widget.deck),
+                          builder: (context) => FlashcardReview(
+                            deck: widget.deck,
+                            onReviewComplete: () async {
+                              // Update progress
+                              final currentProgress =
+                                  widget.deck.progress ?? Progress();
+                              final newProgress = currentProgress
+                                  .incrementReview();
+                              widget.onProgressUpdated?.call(newProgress);
+                              await widget.onDeckUpdated?.call();
+                              setState(() {});
+                            },
+                          ),
                         ),
                       );
+                      setState(() {});
                     },
             ),
           ),
