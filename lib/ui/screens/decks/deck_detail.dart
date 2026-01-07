@@ -73,7 +73,11 @@ class _DeckDetailState extends State<DeckDetail> {
             Expanded(
               child: CardList(
                 deck: widget.deck,
-                onCardChanged: widget.onDeckUpdated,
+                onCardChanged: () async {
+                  await widget.onDeckUpdated?.call();
+                  // Rebuild to update progress bar when card isKnown status changes
+                  setState(() {});
+                },
               ),
             ),
           ],
