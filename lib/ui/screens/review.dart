@@ -136,11 +136,11 @@ class _FlashcardReviewState extends State<FlashcardReview> {
                     }
                   },
                   front: buildCardSide(
-                    label: 'Front',
+                    label: 'Question',
                     content: currentCard.question,
                   ),
                   back: buildCardSide(
-                    label: 'Back',
+                    label: 'Answer',
                     content: currentCard.answer,
                   ),
                 ),
@@ -224,17 +224,6 @@ class _FlashcardReviewState extends State<FlashcardReview> {
                       ),
                     ),
                   ],
-                ),
-              ),
-              // progress bar
-              SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: LinearProgressIndicator(
-                  value: (currentIndex + 1) / flashcards.length,
-                  minHeight: 8,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
                 ),
               ),
               SizedBox(height: 16), // extra space at bottom

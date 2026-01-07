@@ -1,4 +1,5 @@
 import 'package:flashcard_app/models/deck.dart';
+import 'package:flashcard_app/models/progress.dart';
 import 'package:flutter/material.dart';
 
 class DeckCard extends StatelessWidget {
@@ -15,34 +16,10 @@ class DeckCard extends StatelessWidget {
     this.onDelete,
   });
 
-  String _formatLastReviewed(DateTime? lastReviewed) {
-    if (lastReviewed == null) return 'Never reviewed';
-
-    final now = DateTime.now();
-    final difference = now.difference(lastReviewed);
-
-    if (difference.inDays == 0) {
-      if (difference.inHours == 0) {
-        if (difference.inMinutes == 0) {
-          return 'Just now';
-        }
-        return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
-      }
-      return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else if (difference.inDays < 30) {
-      final weeks = (difference.inDays / 7).floor();
-      return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
-    } else if (difference.inDays < 365) {
-      final months = (difference.inDays / 30).floor();
-      return '$months ${months == 1 ? 'month' : 'months'} ago';
-    } else {
-      final years = (difference.inDays / 365).floor();
-      return '$years ${years == 1 ? 'year' : 'years'} ago';
-    }
+  String _getLastReviewedText() {
+    final progress = deck.progress;
+    if (progress == null) return 'Never reviewed';
+    return progress.formatLastReviewed(progress.lastReviewed);
   }
 
   @override
@@ -79,8 +56,8 @@ class DeckCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            deck.color!,
-                            deck.color!.withValues(alpha: 0.7),
+                            deck.color ?? Colors.blue,
+                            (deck.color ?? Colors.blue).withValues(alpha: 0.7),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -148,15 +125,10 @@ class DeckCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value:
                         deck.progress?.getMastery(
-                              deck.progress!.getKnownCount(deck.cards),
-                              deck.progress!.getTotalCount(deck.cards),
-                            ) !=
-                            null
-                        ? deck.progress!.getMastery(
-                            deck.progress!.getKnownCount(deck.cards),
-                            deck.progress!.getTotalCount(deck.cards),
-                          )
-                        : 0,
+                          deck.progress!.getKnownCount(deck.cards),
+                          deck.progress!.getTotalCount(deck.cards),
+                        ) ??
+                        0.0,
                     minHeight: 6,
                     backgroundColor: Color(0xFFE5E7EB),
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
@@ -178,7 +150,15 @@ class DeckCard extends StatelessWidget {
                     Icon(Icons.access_time, size: 16, color: Colors.grey),
                     SizedBox(width: 6),
                     Text(
-                      _formatLastReviewed(deck.progress?.lastReviewed),
+                      _getLastReviewedText(),
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                    const SizedBox(width: 16),
+                    Spacer(),
+                    Text(
+                      deck.progress != null
+                          ? 'ReviewedCount: ${deck.progress!.reviewedCount}'
+                          : 'ReviewedCount: 0',
                       style: TextStyle(fontSize: 13, color: Colors.grey),
                     ),
                   ],
